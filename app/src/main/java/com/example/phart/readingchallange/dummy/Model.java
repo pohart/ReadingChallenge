@@ -2,11 +2,17 @@ package com.example.phart.readingchallange.dummy;
 
 import android.content.SharedPreferences;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
+import com.google.common.collect.ImmutableList;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
 
-import java.io.IOException;
-import java.io.StringReader;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.concurrent.ConcurrentSkipListMap;
@@ -14,7 +20,6 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -23,57 +28,97 @@ import static android.content.Context.MODE_PRIVATE;
  */
 
 public class Model implements MPV_Main.ProvidedModelOps {
-    private final SortedSet<Requirement> requirements = new ConcurrentSkipListSet<>();
-    private final SortedMap<Book, BookRequirements> bookRequirements = new ConcurrentSkipListMap<>();
+    private final SortedSet<Category> categories;
+    private final SortedMap<Book, BookCategories> bookCategories;
 
-    public Model() {
+    public Model(MPV_Main.RequiredPresenterOps presenter) {
+        categories = new ConcurrentSkipListSet<>(loadCategories(presenter).collect(Collectors.toSet()));
+        Map<Book, BookCategories> book2categories
+                = loadBooks(presenter)
+                .collect(Collectors.toMap(Function.identity(),
+                        x -> new BookCategories(
+                                x,
+                                loadCategories(presenter, x.toString())
+                                        .collect(Collectors.toSet()))));
+        bookCategories = new ConcurrentSkipListMap<>(book2categories);
     }
 
-    public Model(final SortedSet<Requirement> requirements, final SortedSet<BookRequirements> bookRequirements) {
-        this.requirements.addAll(requirements);
-        this.bookRequirements.putAll(bookRequirements.stream().collect(Collectors.toMap(BookRequirements::getBook, Function.identity())));
-    }
+    public Model(final Collection<Category> categories, final Collection<BookCategories> bookCategories) {
+        SortedSet<Category> modifiableCategories = new ConcurrentSkipListSet<>();
+        modifiableCategories.addAll(categories);
+        SortedMap<Book, BookCategories> modifiableBooks = new ConcurrentSkipListMap<>();
+        modifiableBooks.putAll(bookCategories.stream().collect(Collectors.toMap(BookCategories::getBook, Function.identity())));
 
-    @Override
-    public SortedMap<Book, BookRequirements> getBookRequirements() {
-        return bookRequirements;
-    }
-
-    public SortedSet<Requirement> getRequirements() {
-        return requirements;
-    }
-
-
-    private Stream<String> loadRequirements(MPV_Main.RequiredPresenterOps presenter) {
-        try {
-            SharedPreferences challengePrefs = presenter.getActivityContext().getSharedPreferences("Challenge", MODE_PRIVATE);
-            String csvRequirements = challengePrefs.getString("requirements", "");
-            final CSVParser requirementsParser = CSVFormat.DEFAULT.parse(new StringReader(csvRequirements));
-            return StreamSupport.stream(requirementsParser.getRecords().get(0).spliterator(), false);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private Stream<String> loadBooks(MPV_Main.RequiredPresenterOps presenter) {
-        try {
-            SharedPreferences challengePrefs = presenter.getActivityContext().getSharedPreferences("Challenge", MODE_PRIVATE);
-            String csvBooks = challengePrefs.getString("books", "");
-            final CSVParser bookParser = CSVFormat.DEFAULT.parse(new StringReader(csvBooks));
-            return StreamSupport.stream(bookParser.getRecords().get(0).spliterator(), false);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        this.categories = modifiableCategories;
+        this.bookCategories = modifiableBooks;
     }
 
     @Override
-    public boolean loadData() {
-//        requirements.addAll(loadRequirements().map(str -> new Requirement(Integer.parseInt(str.)).collect(Collectors.toList()));
-        return false;
+    public SortedMap<Book, BookCategories> getBookCategories() {
+        return bookCategories;
     }
 
+    public SortedSet<Category> getCategories() {
+        return categories;
+    }
+
+
+    private Stream<Category> loadCategories(MPV_Main.RequiredPresenterOps presenter) {
+        String sharedPreferenceCategory = "";
+        return loadCategories(presenter, sharedPreferenceCategory);
+    }
+
+    private Stream<Category> loadCategories(final MPV_Main.RequiredPresenterOps presenter, final String book) {
+        String sharedPreferenceName = "Categories" + (book == null || book.equals("") ? "" : ("|" + book));
+        SharedPreferences challengePrefs =
+                presenter.getActivityContext().getSharedPreferences("Model", MODE_PRIVATE);
+        return challengePrefs.getStringSet(sharedPreferenceName, new HashSet<>())
+                .stream()
+                .map(x -> Category.parseCategory(x));
+    }
+
+    public static Stream<Book> loadBooks(MPV_Main.RequiredPresenterOps presenter) {
+        SharedPreferences challengePrefs = presenter.getActivityContext().getSharedPreferences("Model", MODE_PRIVATE);
+        return challengePrefs.getStringSet("Books", new HashSet<>())
+                .stream()
+                .map(x -> Book.parseBook(x));
+    }
     @Override
-    public boolean persistData() {
-        return false;
+    public void persistData(MPV_Main.RequiredPresenterOps presenter) {
+        SharedPreferences.Editor editor = presenter.getActivityContext().getSharedPreferences("Model", MODE_PRIVATE).edit();
+        editor.putStringSet("Categories", categories.stream().map(x -> x.toString()).collect(Collectors.toSet()));
+        editor.putStringSet("Books", bookCategories.keySet().stream().map(x -> x.toString()).collect(Collectors.toSet()));
+        bookCategories.entrySet().stream().forEach(bc -> editor.putStringSet("Categories|" + bc.getKey().toString(),
+                bc.getValue().getCategories().stream().map(c -> c.toString()).collect(Collectors.toSet())));
+        editor.commit();
+    }
+
+    public static void main(String[] args) {
+        Collection<BookCategories> books = new ArrayList<>();
+        List<Category> categories = new ArrayList<>();
+        categories.add(new Category(1, "A book with a female author."));
+        categories.add(new Category(2, "A book from your childhood."));
+        categories.add(new Category(3, "A book with a one word title."));
+        categories.add(new Category(4, "A young adult book."));
+        categories.add(new Category(5, "Another category."));
+
+
+        Model m =
+                new Model(categories, ImmutableList.of(
+                        new BookCategories(new Book("Son", "Lois Lowry",
+                                LocalDate.of(2018, 1, 7)),
+                                ImmutableList.of(categories.get(0),
+                                        categories.get(2),
+                                        categories.get(3))),
+                        new BookCategories(new Book("The Slave Dancer", "Lois Lowry2",
+                                LocalDate.of(2018, 1, 8)),
+                                ImmutableList.of(categories.get(0),
+                                        categories.get(1),
+                                        categories.get(3)))));
+
+        System.out.println(new Gson().fromJson(new Gson().toJson(m), Model.class) == m);
+        JsonParser jsonParser = new JsonParser();
+        JsonArray jsonArray = jsonParser.parse(new Gson().toJson(m)).getAsJsonArray();
+//        ObjectSer
     }
 }

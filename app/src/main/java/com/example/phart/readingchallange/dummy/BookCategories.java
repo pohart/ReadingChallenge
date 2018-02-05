@@ -11,20 +11,20 @@ import java.util.concurrent.ConcurrentSkipListSet;
  */
 
 @Immutable
-public class BookRequirements {
+public class BookCategories {
     private final Book book;
-    private final SortedSet<Requirement> requirements;
+    private final SortedSet<Category> categories;
 
-    public BookRequirements(final Book book, final Collection<Requirement> requirements) {
+    public BookCategories(final Book book, final Collection<Category> categories) {
         this.book = book;
-        this.requirements = new ConcurrentSkipListSet<>(requirements);
+        this.categories = new ConcurrentSkipListSet<>(categories);
     }
 
     public Book getBook() {
         return book;
     }
 
-    public SortedSet<Requirement> getRequirements() {
-        return requirements;
+    public SortedSet<Category> getCategories() {
+        return categories;
     }
 }

@@ -55,11 +55,11 @@ public interface MPV_Main {
      */
     interface ProvidedModelOps {
         // Model operations permitted to Presenter
-        SortedMap<Book, BookRequirements> getBookRequirements();
+        SortedMap<Book, BookCategories> getBookCategories();
 
-        boolean loadData();
+        //boolean loadData(MPV_Main.RequiredPresenterOps ops);
 
-        boolean persistData();
+        void persistData(RequiredPresenterOps ops);
     }
 
 }

@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">ReadingChallange</string>
     <string name="title_book_detail">Book Detail</string>
+    <string name="title">Title</string>
+    <string name="readdate">readDate</string>
+    <string name="author">Author</string>
 </resources>

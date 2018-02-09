@@ -1,10 +1,8 @@
-package com.example.phart.readingchallange.dummy;
+package com.example.phart.readingchallange.database;
 
 import net.jcip.annotations.Immutable;
 
 import java.util.Collection;
-import java.util.SortedSet;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * Created by PHART on 1/26/2018.
@@ -13,18 +11,18 @@ import java.util.concurrent.ConcurrentSkipListSet;
 @Immutable
 public class BookCategories {
     private final Book book;
-    private final SortedSet<Category> categories;
+    private final SetList<Category> categories;
 
     public BookCategories(final Book book, final Collection<Category> categories) {
         this.book = book;
-        this.categories = new ConcurrentSkipListSet<>(categories);
+        this.categories = new SetList<>(categories);
     }
 
     public Book getBook() {
         return book;
     }
 
-    public SortedSet<Category> getCategories() {
+    public SetList<Category> getCategories() {
         return categories;
     }
 }

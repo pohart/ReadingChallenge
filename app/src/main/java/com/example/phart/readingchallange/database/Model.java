@@ -1,4 +1,4 @@
-package com.example.phart.readingchallange.dummy;
+package com.example.phart.readingchallange.database;
 
 import android.content.SharedPreferences;
 
@@ -14,9 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
-import java.util.SortedSet;
 import java.util.concurrent.ConcurrentSkipListMap;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -27,12 +25,12 @@ import static android.content.Context.MODE_PRIVATE;
  * Created by PHART on 1/26/2018.
  */
 
-public class Model implements MPV_Main.ProvidedModelOps {
-    private final SortedSet<Category> categories;
+public class Model implements MPV_Main.ProvidedModelOps{
+    private final SetList<Category> categories;
     private final SortedMap<Book, BookCategories> bookCategories;
 
-    public Model(MPV_Main.RequiredPresenterOps presenter) {
-        categories = new ConcurrentSkipListSet<>(loadCategories(presenter).collect(Collectors.toSet()));
+    public Model(MPV_Main.RequiredViewOps presenter) {
+        categories = new SetList<>(loadCategories(presenter).collect(Collectors.toSet()));
         Map<Book, BookCategories> book2categories
                 = loadBooks(presenter)
                 .collect(Collectors.toMap(Function.identity(),
@@ -44,7 +42,7 @@ public class Model implements MPV_Main.ProvidedModelOps {
     }
 
     public Model(final Collection<Category> categories, final Collection<BookCategories> bookCategories) {
-        SortedSet<Category> modifiableCategories = new ConcurrentSkipListSet<>();
+        SetList<Category> modifiableCategories = new SetList<>();
         modifiableCategories.addAll(categories);
         SortedMap<Book, BookCategories> modifiableBooks = new ConcurrentSkipListMap<>();
         modifiableBooks.putAll(bookCategories.stream().collect(Collectors.toMap(BookCategories::getBook, Function.identity())));
@@ -58,17 +56,17 @@ public class Model implements MPV_Main.ProvidedModelOps {
         return bookCategories;
     }
 
-    public SortedSet<Category> getCategories() {
+    public SetList<Category> getCategories() {
         return categories;
     }
 
 
-    private Stream<Category> loadCategories(MPV_Main.RequiredPresenterOps presenter) {
+    private Stream<Category> loadCategories(MPV_Main.RequiredViewOps presenter) {
         String sharedPreferenceCategory = "";
         return loadCategories(presenter, sharedPreferenceCategory);
     }
 
-    private Stream<Category> loadCategories(final MPV_Main.RequiredPresenterOps presenter, final String book) {
+    private Stream<Category> loadCategories(final MPV_Main.RequiredViewOps presenter, final String book) {
         String sharedPreferenceName = "Categories" + (book == null || book.equals("") ? "" : ("|" + book));
         SharedPreferences challengePrefs =
                 presenter.getActivityContext().getSharedPreferences("Model", MODE_PRIVATE);
@@ -77,15 +75,15 @@ public class Model implements MPV_Main.ProvidedModelOps {
                 .map(x -> Category.parseCategory(x));
     }
 
-    public static Stream<Book> loadBooks(MPV_Main.RequiredPresenterOps presenter) {
-        SharedPreferences challengePrefs = presenter.getActivityContext().getSharedPreferences("Model", MODE_PRIVATE);
+    public static Stream<Book> loadBooks(MPV_Main.RequiredViewOps view) {
+        SharedPreferences challengePrefs = view.getActivityContext().getSharedPreferences("Model", MODE_PRIVATE);
         return challengePrefs.getStringSet("Books", new HashSet<>())
                 .stream()
                 .map(x -> Book.parseBook(x));
     }
     @Override
-    public void persistData(MPV_Main.RequiredPresenterOps presenter) {
-        SharedPreferences.Editor editor = presenter.getActivityContext().getSharedPreferences("Model", MODE_PRIVATE).edit();
+    public void persistData(MPV_Main.RequiredViewOps view) {
+        SharedPreferences.Editor editor = view.getActivityContext().getSharedPreferences("Model", MODE_PRIVATE).edit();
         editor.putStringSet("Categories", categories.stream().map(x -> x.toString()).collect(Collectors.toSet()));
         editor.putStringSet("Books", bookCategories.keySet().stream().map(x -> x.toString()).collect(Collectors.toSet()));
         bookCategories.entrySet().stream().forEach(bc -> editor.putStringSet("Categories|" + bc.getKey().toString(),

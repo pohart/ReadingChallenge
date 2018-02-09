@@ -1,4 +1,4 @@
-package com.example.phart.readingchallange.dummy;
+package com.example.phart.readingchallange.database;
 
 import android.content.Context;
 
@@ -37,6 +37,7 @@ public interface MPV_Main {
 //        int getNotesCount();
 //        NotesViewHolder createViewHolder(ViewGroup parent, int viewType);
 //        void bindViewHolder(NotesViewHolder holder, int position);
+        void clickNewBook();
     }
 
     /**
@@ -59,7 +60,7 @@ public interface MPV_Main {
 
         //boolean loadData(MPV_Main.RequiredPresenterOps ops);
 
-        void persistData(RequiredPresenterOps ops);
+        void persistData(RequiredViewOps ops);
     }
 
 }

@@ -4,11 +4,11 @@ import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.example.phart.readingchallange.dummy.Book;
-import com.example.phart.readingchallange.dummy.BookCategories;
-import com.example.phart.readingchallange.dummy.Category;
-import com.example.phart.readingchallange.dummy.MPV_Main;
-import com.example.phart.readingchallange.dummy.Model;
+import com.example.phart.readingchallange.database.Book;
+import com.example.phart.readingchallange.database.BookCategories;
+import com.example.phart.readingchallange.database.Category;
+import com.example.phart.readingchallange.database.MPV_Main;
+import com.example.phart.readingchallange.database.Model;
 import com.google.common.collect.ImmutableList;
 
 import org.junit.Test;

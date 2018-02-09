@@ -1,6 +1,6 @@
 package com.example.phart.readingchallange;
 
-import com.example.phart.readingchallange.dummy.Book;
+import com.example.phart.readingchallange.database.Book;
 
 import org.junit.Test;
 

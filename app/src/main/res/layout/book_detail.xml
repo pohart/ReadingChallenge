@@ -1,9 +1,46 @@
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/book_detail"
-    style="?android:attr/textAppearanceLarge"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="16dp"
-    android:textIsSelectable="true"
-    tools:context="com.example.phart.readingchallange.BookDetailFragment" />
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable name="book" type="com.example.phart.readingchallange.database.Book"/>
+    </data>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/book_detail"
+        style="?android:attr/textAppearanceLarge"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:textIsSelectable="true"
+        tools:context="com.example.phart.readingchallange.BookDetailFragment" >
+
+        <EditText
+            android:id="@+id/bookTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/title"
+            android:inputType="text"
+            android:text="@={book.author}" />
+
+        <EditText
+            android:id="@+id/bookAuthor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/author"
+            android:inputType="textPersonName"
+            android:text="@={book.author}"/>
+
+        <EditText
+            android:id="@+id/bookReadDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/readdate"
+            android:inputType="date" />
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+</layout>

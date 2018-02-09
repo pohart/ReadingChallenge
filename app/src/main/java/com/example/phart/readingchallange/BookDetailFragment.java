@@ -1,6 +1,7 @@
 package com.example.phart.readingchallange;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -8,9 +9,12 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import com.example.phart.readingchallange.dummy.DummyContent;
+import com.example.phart.readingchallange.database.Book;
+import com.example.phart.readingchallange.database.BookCategories;
+import com.example.phart.readingchallange.database.MPV_Main;
+import com.example.phart.readingchallange.database.Model;
+
 
 /**
  * A fragment representing a single Book detail screen.
@@ -18,7 +22,7 @@ import com.example.phart.readingchallange.dummy.DummyContent;
  * in two-pane mode (on tablets) or a {@link BookDetailActivity}
  * on handsets.
  */
-public class BookDetailFragment extends Fragment {
+public class BookDetailFragment extends Fragment implements MPV_Main.RequiredViewOps {
     /**
      * The fragment argument representing the item ID that this fragment
      * represents.
@@ -28,7 +32,7 @@ public class BookDetailFragment extends Fragment {
     /**
      * The dummy content this fragment is presenting.
      */
-    private DummyContent.DummyItem mItem;
+    private BookCategories mItem;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -45,12 +49,12 @@ public class BookDetailFragment extends Fragment {
             // Load the dummy content specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
-            mItem = DummyContent.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
+            mItem = new Model(this).getBookCategories().get(Book.parseBook((String)getArguments().get(ARG_ITEM_ID)));
 
             Activity activity = this.getActivity();
             CollapsingToolbarLayout appBarLayout = activity.findViewById(R.id.toolbar_layout);
             if (appBarLayout != null) {
-                appBarLayout.setTitle(mItem.content);
+                appBarLayout.setTitle(mItem.getBook().title);
             }
         }
     }
@@ -62,9 +66,28 @@ public class BookDetailFragment extends Fragment {
 
         // Show the dummy content as text in a TextView.
         if (mItem != null) {
-            ((TextView) rootView.findViewById(R.id.book_detail)).setText(mItem.details);
         }
 
         return rootView;
+    }
+
+    @Override
+    public Context getAppContext() {
+        return super.getActivity().getApplicationContext();
+    }
+
+    @Override
+    public Context getActivityContext() {
+        return super.getActivity();
+    }
+
+    @Override
+    public void notifyItemInserted(final int layoutPosition) {
+
+    }
+
+    @Override
+    public void notifyItemRangeChanged(final int positionStart, final int itemCount) {
+
     }
 }

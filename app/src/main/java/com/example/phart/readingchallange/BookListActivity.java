@@ -70,7 +70,7 @@ public class BookListActivity extends AppCompatActivity
 
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, .ITEMS, mTwoPane));
+//        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(this, .ITEMS, mTwoPane));
     }
 
     @Override

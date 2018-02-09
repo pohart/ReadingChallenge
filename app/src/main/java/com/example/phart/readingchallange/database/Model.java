@@ -67,56 +67,58 @@ public class Model implements MPV_Main.ProvidedModelOps{
     }
 
     private Stream<Category> loadCategories(final MPV_Main.RequiredViewOps presenter, final String book) {
-        String sharedPreferenceName = "Categories" + (book == null || book.equals("") ? "" : ("|" + book));
-        SharedPreferences challengePrefs =
-                presenter.getActivityContext().getSharedPreferences("Model", MODE_PRIVATE);
-        return challengePrefs.getStringSet(sharedPreferenceName, new HashSet<>())
-                .stream()
-                .map(x -> Category.parseCategory(x));
+//        String sharedPreferenceName = "Categories" + (book == null || book.equals("") ? "" : ("|" + book));
+//        SharedPreferences challengePrefs =
+//                presenter.getActivityContext().getSharedPreferences("Model", MODE_PRIVATE);
+//        return challengePrefs.getStringSet(sharedPreferenceName, new HashSet<>())
+//                .stream()
+//                .map(x -> Category.parseCategory(x));
+        return null;
     }
 
     public static Stream<Book> loadBooks(MPV_Main.RequiredViewOps view) {
-        SharedPreferences challengePrefs = view.getActivityContext().getSharedPreferences("Model", MODE_PRIVATE);
-        return challengePrefs.getStringSet("Books", new HashSet<>())
-                .stream()
-                .map(x -> Book.parseBook(x));
+//        SharedPreferences challengePrefs = view.getActivityContext().getSharedPreferences("Model", MODE_PRIVATE);
+//        return challengePrefs.getStringSet("Books", new HashSet<>())
+//                .stream()
+//                .map(x -> Book.parseBook(x));
+        return null;
     }
     @Override
     public void persistData(MPV_Main.RequiredViewOps view) {
-        SharedPreferences.Editor editor = view.getActivityContext().getSharedPreferences("Model", MODE_PRIVATE).edit();
-        editor.putStringSet("Categories", categories.stream().map(x -> x.toString()).collect(Collectors.toSet()));
-        editor.putStringSet("Books", bookCategories.keySet().stream().map(x -> x.toString()).collect(Collectors.toSet()));
-        bookCategories.entrySet().stream().forEach(bc -> editor.putStringSet("Categories|" + bc.getKey().toString(),
-                bc.getValue().getCategories().stream().map(c -> c.toString()).collect(Collectors.toSet())));
-        editor.commit();
+//        SharedPreferences.Editor editor = view.getActivityContext().getSharedPreferences("Model", MODE_PRIVATE).edit();
+//        editor.putStringSet("Categories", categories.stream().map(x -> x.toString()).collect(Collectors.toSet()));
+//        editor.putStringSet("Books", bookCategories.keySet().stream().map(x -> x.toString()).collect(Collectors.toSet()));
+//        bookCategories.entrySet().stream().forEach(bc -> editor.putStringSet("Categories|" + bc.getKey().toString(),
+//                bc.getValue().getCategories().stream().map(c -> c.toString()).collect(Collectors.toSet())));
+//        editor.commit();
     }
 
     public static void main(String[] args) {
-        Collection<BookCategories> books = new ArrayList<>();
-        List<Category> categories = new ArrayList<>();
-        categories.add(new Category(1, "A book with a female author."));
-        categories.add(new Category(2, "A book from your childhood."));
-        categories.add(new Category(3, "A book with a one word title."));
-        categories.add(new Category(4, "A young adult book."));
-        categories.add(new Category(5, "Another category."));
-
-
-        Model m =
-                new Model(categories, ImmutableList.of(
-                        new BookCategories(new Book("Son", "Lois Lowry",
-                                LocalDate.of(2018, 1, 7)),
-                                ImmutableList.of(categories.get(0),
-                                        categories.get(2),
-                                        categories.get(3))),
-                        new BookCategories(new Book("The Slave Dancer", "Lois Lowry2",
-                                LocalDate.of(2018, 1, 8)),
-                                ImmutableList.of(categories.get(0),
-                                        categories.get(1),
-                                        categories.get(3)))));
-
-        System.out.println(new Gson().fromJson(new Gson().toJson(m), Model.class) == m);
-        JsonParser jsonParser = new JsonParser();
-        JsonArray jsonArray = jsonParser.parse(new Gson().toJson(m)).getAsJsonArray();
+//        Collection<BookCategories> books = new ArrayList<>();
+//        List<Category> categories = new ArrayList<>();
+//        categories.add(new Category(1, "A book with a female author."));
+//        categories.add(new Category(2, "A book from your childhood."));
+//        categories.add(new Category(3, "A book with a one word title."));
+//        categories.add(new Category(4, "A young adult book."));
+//        categories.add(new Category(5, "Another category."));
+//
+//
+//        Model m =
+//                new Model(categories, ImmutableList.of(
+//                        new BookCategories(new Book("Son", "Lois Lowry",
+//                                LocalDate.of(2018, 1, 7)),
+//                                ImmutableList.of(categories.get(0),
+//                                        categories.get(2),
+//                                        categories.get(3))),
+//                        new BookCategories(new Book("The Slave Dancer", "Lois Lowry2",
+//                                LocalDate.of(2018, 1, 8)),
+//                                ImmutableList.of(categories.get(0),
+//                                        categories.get(1),
+//                                        categories.get(3)))));
+//
+//        System.out.println(new Gson().fromJson(new Gson().toJson(m), Model.class) == m);
+//        JsonParser jsonParser = new JsonParser();
+//        JsonArray jsonArray = jsonParser.parse(new Gson().toJson(m)).getAsJsonArray();
 //        ObjectSer
     }
 }

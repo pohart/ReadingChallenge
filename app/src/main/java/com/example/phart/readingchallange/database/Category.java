@@ -20,9 +20,10 @@ public class Category implements Comparable<Category> {
     private int number;
     private String category;
 
-    public Category(final int number, final String categroy) {
+    public Category(final int categoryId, final int number, final String category) {
+        this.categoryId = categoryId;
         this.number = number;
-        this.category = categroy;
+        this.category = category;
     }
 
     public int getNumber() { return number; }
@@ -75,5 +76,13 @@ public class Category implements Comparable<Category> {
 
     public String getCategoryString() {
         return category;
+    }
+
+    public int getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
     }
 }

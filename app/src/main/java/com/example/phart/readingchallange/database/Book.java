@@ -5,6 +5,7 @@ import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Objects;
 
 
@@ -16,19 +17,19 @@ public class Book implements Comparable<Book> {
     @PrimaryKey public int bookId;
     private String title;
     private String author;
-    public Date dateCompleted;
+    public LocalDate dateCompleted;
 
-    public Book(final String title, final String author, final Date dateCompleted) {
+    public Book(final String title, final String author, final LocalDate dateCompleted) {
         this.title = title;
         this.author = author;
         this.dateCompleted = dateCompleted;
     }
 
-    public Date getDateRead() {
+    public LocalDate getDateRead() {
         return dateCompleted;
     }
 
-    public void setDateCompleted(final Date dateCompleted) {
+    public void setDateCompleted(final LocalDate dateCompleted) {
         this.dateCompleted = dateCompleted;
     }
 

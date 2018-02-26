@@ -54,7 +54,7 @@ public class BookDetailFragment extends Fragment implements MPV_Main.RequiredVie
             Activity activity = this.getActivity();
             CollapsingToolbarLayout appBarLayout = activity.findViewById(R.id.toolbar_layout);
             if (appBarLayout != null) {
-                appBarLayout.setTitle(mItem.getBook().title);
+                appBarLayout.setTitle(mItem.getBook().getTitle());
             }
         }
     }

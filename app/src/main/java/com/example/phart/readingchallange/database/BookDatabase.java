@@ -6,7 +6,6 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.RoomDatabase;
-import android.arch.persistence.room.TypeConverter;
 import android.arch.persistence.room.TypeConverters;
 import android.arch.persistence.room.Update;
 
@@ -21,8 +20,8 @@ import java.util.List;
         version = 1,
         entities = {Book.class, Category.class, BookCategory.class}
 )
-@TypeConverters({Database.class})
-public abstract class Database extends RoomDatabase {
+@TypeConverters({BookDatabase.TypeConverter.class})
+public abstract class BookDatabase extends RoomDatabase {
     abstract public BookDao bookdDao();
     abstract public CategoryDao categroyDao();
     abstract public BookCategoryDao bookCategoryDao();
@@ -78,14 +77,18 @@ public abstract class Database extends RoomDatabase {
         void deleteBookCategories();
     }
 
+    public static class TypeConverter {
+        @android.arch.persistence.room.TypeConverter
+        public String toString(LocalDate value) {
+            return DateTimeFormatter.BASIC_ISO_DATE.format(value);
+        }
 
-    @TypeConverter
-    public String toString(LocalDate value) {
-        return DateTimeFormatter.BASIC_ISO_DATE.format(value);
+        @android.arch.persistence.room.TypeConverter
+        public LocalDate toLocalDate(String value) {
+            return LocalDate.from(DateTimeFormatter.BASIC_ISO_DATE.parse(value));
+        }
     }
-    @TypeConverter
-    public LocalDate toLocalDate(String value) {
-        return LocalDate.from(DateTimeFormatter.BASIC_ISO_DATE.parse(value));
-    }
+
+
 
 }

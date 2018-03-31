@@ -4,8 +4,8 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
-import java.sql.Date;
-import java.time.LocalDate;
+import com.example.phart.readingchallange.LocalDate;
+
 import java.util.Objects;
 
 
@@ -14,7 +14,8 @@ import java.util.Objects;
  */
 @Entity
 public class Book implements Comparable<Book> {
-    @PrimaryKey public int bookId;
+    @PrimaryKey(autoGenerate = true)
+    public int bookId;
     private String title;
     private String author;
     public LocalDate dateCompleted;
@@ -23,6 +24,7 @@ public class Book implements Comparable<Book> {
         this.title = title;
         this.author = author;
         this.dateCompleted = dateCompleted;
+
     }
 
     public LocalDate getDateRead() {
@@ -64,4 +66,9 @@ public class Book implements Comparable<Book> {
     @Override
     public int compareTo(@NonNull final Book o) { return this.dateCompleted.compareTo(o.dateCompleted); }
 
+    @Override
+    public String toString() {
+        return "\"" + getTitle() + "\" By " + getAuthor();
+    }
 }
+

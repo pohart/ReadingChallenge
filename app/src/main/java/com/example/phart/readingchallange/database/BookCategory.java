@@ -2,12 +2,16 @@ package com.example.phart.readingchallange.database;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.Index;
 
 /**
  * Created by PHART on 2/8/2018.
  */
 @Entity(
         primaryKeys = {"bookId", "categoryId"},
+        indices = {
+                @Index("bookId"),
+                @Index("categoryId")},
         foreignKeys = {
                 @ForeignKey(entity = Book.class,parentColumns = "bookId", childColumns = "bookId"),
                 @ForeignKey(entity = Category.class,parentColumns = "categoryId", childColumns = "categoryId")
